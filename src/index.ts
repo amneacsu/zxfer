@@ -1,49 +1,66 @@
-const audioCtx = new AudioContext();
+import './style.css';
 
+const width = 40000;
+const height = 1024;
+
+const audioCtx = new AudioContext();
 const audio = new Audio('Manic_Miner.wav');
 const source = audioCtx.createMediaElementSource(audio);
 const analyser = new AnalyserNode(audioCtx);
-const gainNode = audioCtx.createGain();
-gainNode.gain.value = 0;
+analyser.fftSize = 512;
+analyser.smoothingTimeConstant = 0;
 
 source.connect(analyser);
-gainNode.connect(audioCtx.destination);
-analyser.connect(gainNode);
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-canvas.width = 1000;
-canvas.height = 255;
+canvas.width = width;
+canvas.height = height;
 const drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-const width = canvas.width;
-const height = canvas.height;
-const frequencyBinCount = analyser.frequencyBinCount;
+let x = 0;
 
 const tick2 = () => {
-  const data = new Uint8Array(frequencyBinCount);
-  analyser.getByteTimeDomainData(data);
-  let x = 0;
+  const data = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(data);
+  drawContext.beginPath();
 
-  for (let i = 0; i < frequencyBinCount; i++) {
-    const v = data[i] / 128.0;
-    const y = v * height / 2;
+  for (let i = 0; i < data.length; i++) {
+    const y = height / 2 + data[i] * 1.5 * height;
 
     if (i === 0) drawContext.moveTo(x, y);
     else drawContext.lineTo(x, y);
 
-    x += 1;
+    x += 4;
   }
+  drawContext.strokeStyle = '#FFF';
+  drawContext.stroke();
 
-  drawContext.lineTo(width, height / 2);
+  drawContext.beginPath();
+  drawContext.moveTo(x, 0);
+  drawContext.lineTo(x, height);
+  drawContext.strokeStyle = '#0F0';
+  drawContext.stroke();
 };
+
+console.log('audioCtx.sampleRate', audioCtx.sampleRate);
+console.log('audioCtx.outputLatency', audioCtx.outputLatency);
+console.log('audioCtx.baseLatency', audioCtx.baseLatency);
+console.log('analyser.fftSize', analyser.fftSize);
+const interval = analyser.fftSize / audioCtx.sampleRate * 1000;
+console.log('interval', interval);
+
+// let last = 0;
 
 const tick = () => {
-  drawContext.clearRect(0, 0, canvas.width, canvas.height);
   drawContext.beginPath();
   tick2();
-  drawContext.stroke();
-  window.requestAnimationFrame(tick);
+  // console.log(audioCtx.currentTime - last);
+  // last = audioCtx.currentTime % interval;
+  setTimeout(tick, interval);
 };
 
-window.requestAnimationFrame(tick);
-audio.play();
+audio.addEventListener('loadeddata', () => {
+  audio.currentTime = audio.duration / 2;
+  audio.play();
+  tick();
+});
