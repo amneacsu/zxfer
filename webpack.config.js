@@ -22,6 +22,11 @@ const config = {
     }),
   ],
   module: {
+    parser: {
+      javascript: {
+        worker: ['AudioWorkletUrl from audio-worklet', '...'],
+      },
+    },
     rules: [
       {
         test: /\.(ts|tsx)$/i,
@@ -43,6 +48,12 @@ const config = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      'audio-worklet': path.resolve(__dirname, 'src/worklets/index.ts'),
+    },
+  },
+  experiments: {
+    topLevelAwait: true,
   },
 };
 
