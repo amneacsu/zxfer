@@ -2,85 +2,101 @@ import './style.css';
 import { AudioWorkletUrl } from 'audio-worklet';
 
 const width = 40000;
-const height = 1024;
+const height = 256;
 
 const audioCtx = new AudioContext();
 
 await audioCtx.audioWorklet.addModule(
-  new AudioWorkletUrl(
-    new URL(
-      './noise-generator.js',
-      import.meta.url,
-    ),
-  ) as string,
+  new AudioWorkletUrl(new URL('./decoder.js', import.meta.url)) as string,
 );
 
-const noiseGenerator = new AudioWorkletNode(audioCtx, 'noise-generator');
-// noiseGenerator.connect(audioCtx.destination);
-
+const decoder = new AudioWorkletNode(audioCtx, 'decoder');
 const audio = new Audio('Manic_Miner.wav');
 const source = audioCtx.createMediaElementSource(audio);
-const analyser = new AnalyserNode(audioCtx);
-// analyser.fftSize = 512;
-analyser.smoothingTimeConstant = 0;
 
-source.connect(analyser);
+source.connect(decoder);
+// source.connect(audioCtx.destination);
 
 const canvas = document.getElementById('canvas') as HTMLCanvasElement;
 canvas.width = width;
 canvas.height = height;
 const drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-let x = 0;
+let horizontalStep = 4;
 
-const tick2 = () => {
-  const data = new Float32Array(analyser.fftSize);
-  analyser.getFloatTimeDomainData(data);
-  // drawContext.beginPath();
+const renderQuantums: Float32Array[] = [];
+const edges: number[] = [];
 
-  for (let i = 0; i < data.length; i++) {
-    const y = height / 2 + data[i] * 1.5 * height;
+// Draw render quantum
+decoder.port.onmessage = (event) => {
+  const { type, payload } = event.data;
 
-    // if (i === 0) drawContext.moveTo(x, y);
-    // else drawContext.lineTo(x, y);
-    drawContext.lineTo(x, y);
-
-    x += 4;
+  switch (type) {
+    case 'quantum': {
+      renderQuantums.push(payload);
+      break;
+    }
+    case 'edge':
+      edges.push(payload);
+      break;
   }
-  // drawContext.strokeStyle = '#FFF';
-  // drawContext.stroke();
-
-  // drawContext.beginPath();
-  // drawContext.moveTo(x, 0);
-  // drawContext.lineTo(x, height);
-  // drawContext.strokeStyle = '#0F0';
-  // drawContext.stroke();
 };
 
-console.log('audioCtx.sampleRate', audioCtx.sampleRate);
-console.log('audioCtx.outputLatency', audioCtx.outputLatency);
-console.log('audioCtx.baseLatency', audioCtx.baseLatency);
-console.log('analyser.fftSize', analyser.fftSize);
-const interval = analyser.fftSize / audioCtx.sampleRate * 1000;
-console.log('interval', interval);
+const clear = () => {
+  drawContext.clearRect(0, 0, width, height);
+};
 
-// let last = 0;
-
-const colors = ['#f00', '#0f0', '#00f'];
-let i = 0;
-const tick = () => {
-  drawContext.strokeStyle = colors[i % colors.length];
+const drawVerticalLine = (x: number, color: string) => {
   drawContext.beginPath();
-  tick2();
+  drawContext.strokeStyle = color;
+  drawContext.moveTo(x, 0);
+  drawContext.lineTo(x, height);
   drawContext.stroke();
-  // console.log(audioCtx.currentTime - last);
-  // last = audioCtx.currentTime % interval;
-  i+=1;
-  setTimeout(tick, interval);
 };
 
+const drawGrid = () => {
+  // for (let i = 0; i < width / horizontalStep; i++) {
+  //   drawVerticalLine(i * horizontalStep, '#333');
+  // }
+  drawContext.beginPath();
+  drawContext.strokeStyle = '#777';
+  drawContext.moveTo(0, height / 2);
+  drawContext.lineTo(width, height / 2);
+  drawContext.stroke();
+};
+
+const drawEdges = () => {
+  edges.forEach((edge) => {
+    drawVerticalLine(edge * horizontalStep, '#00f');
+  });
+};
+
+const drawSamples = () => {
+  drawContext.strokeStyle = '#0f0';
+  drawContext.beginPath();
+  let x = 0;
+
+  renderQuantums.forEach((samples) => {
+    samples.forEach((sample) => {
+      const y = height / 2 - sample * 1.5 * height;
+      drawContext.lineTo(x, y);
+      x += horizontalStep;
+    });
+  });
+
+  drawContext.stroke();
+};
+
+const tick = () => {
+  clear();
+  drawGrid();
+  drawEdges();
+  drawSamples();
+};
+
+// Wait for audio data
 audio.addEventListener('loadeddata', () => {
-  audio.currentTime = audio.duration / 2;
+  audio.currentTime = audio.duration / 2 + .33;
   audio.play();
-  tick();
+  setInterval(tick, 500);
 });
