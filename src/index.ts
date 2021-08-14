@@ -23,7 +23,7 @@ canvas.width = width;
 canvas.height = height;
 const drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-let horizontalStep = 2;
+let horizontalStep = 5;
 
 const renderQuantums: Float32Array[] = [];
 const edges: number[] = [];
@@ -56,9 +56,6 @@ const drawVerticalLine = (x: number, color: string) => {
 };
 
 const drawGrid = () => {
-  // for (let i = 0; i < width / horizontalStep; i++) {
-  //   drawVerticalLine(i * horizontalStep, '#333');
-  // }
   drawContext.beginPath();
   drawContext.strokeStyle = '#777';
   drawContext.moveTo(0, height / 2);
@@ -98,7 +95,12 @@ const tick = () => {
 // Wait for audio data
 audio.addEventListener('loadeddata', () => {
   audio.currentTime = audio.duration / 2 + .33;
-  // audio.currentTime = .45;
   audio.play();
-  setInterval(tick, 500);
+  setInterval(tick, 200);
+});
+
+document.querySelector('#scale').addEventListener('input', (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  horizontalStep = target.valueAsNumber;
+  tick();
 });
