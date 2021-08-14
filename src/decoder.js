@@ -24,15 +24,16 @@ class NoiseGenerator extends AudioWorkletProcessor {
     this.port.postMessage({ type: 'quantum', payload: inputs[0][0] });
     const input = inputs[0];
     const samples = input[0];
-    // console.group('process');
     this.window1(samples);
-    // console.groupEnd();
-    return this.index < 10000;
+    return this.index < 1024;
   }
+
+  last = 0;
 
   window1(samples) {
     samples.forEach((sample, i) => {
       if (isEdge(sample)) {
+        this.last = this.index + i;
         this.port.postMessage({ type: 'edge', payload: this.index + i });
       }
     });

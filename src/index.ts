@@ -11,7 +11,8 @@ await audioCtx.audioWorklet.addModule(
 );
 
 const decoder = new AudioWorkletNode(audioCtx, 'decoder');
-const audio = new Audio('Manic_Miner.wav');
+// const audio = new Audio('Manic_Miner.wav');
+const audio = new Audio('1.wav');
 const source = audioCtx.createMediaElementSource(audio);
 
 source.connect(decoder);
@@ -22,7 +23,7 @@ canvas.width = width;
 canvas.height = height;
 const drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-let horizontalStep = 4;
+let horizontalStep = 2;
 
 const renderQuantums: Float32Array[] = [];
 const edges: number[] = [];
@@ -78,7 +79,7 @@ const drawSamples = () => {
 
   renderQuantums.forEach((samples) => {
     samples.forEach((sample) => {
-      const y = height / 2 - sample * 1.5 * height;
+      const y = height / 2 - sample * height / 2;
       drawContext.lineTo(x, y);
       x += horizontalStep;
     });
@@ -97,6 +98,7 @@ const tick = () => {
 // Wait for audio data
 audio.addEventListener('loadeddata', () => {
   audio.currentTime = audio.duration / 2 + .33;
+  // audio.currentTime = .45;
   audio.play();
   setInterval(tick, 500);
 });
