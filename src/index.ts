@@ -1,12 +1,7 @@
 import './style.css';
 import { AudioWorkletUrl } from 'audio-worklet';
 
-import {
-  clear,
-  drawGrid,
-  drawEdges,
-  drawSamples,
-} from './oscilloscope';
+import { Oscilloscope } from './oscilloscope';
 
 const audioCtx = new AudioContext();
 
@@ -40,11 +35,13 @@ decoder.port.onmessage = (event) => {
   }
 };
 
+const viewer = new Oscilloscope();
+
 const tick = () => {
-  clear();
-  drawGrid();
-  drawEdges(edges);
-  drawSamples(renderQuantums);
+  viewer.clear();
+  viewer.drawGrid();
+  viewer.drawEdges(edges);
+  viewer.drawSamples(renderQuantums);
 };
 
 // Wait for audio data
