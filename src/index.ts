@@ -7,7 +7,7 @@ const height = 256;
 const audioCtx = new AudioContext();
 
 await audioCtx.audioWorklet.addModule(
-  new AudioWorkletUrl(new URL('./decoder.js', import.meta.url)) as string,
+  new AudioWorkletUrl(new URL('./decoder.ts', import.meta.url)) as string,
 );
 
 const decoder = new AudioWorkletNode(audioCtx, 'decoder');

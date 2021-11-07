@@ -1,4 +1,4 @@
-const polarity = (value) => {
+const polarity = (value: number) => {
   const threshold = 0.01;
 
   if (value > threshold) return 1;
@@ -8,8 +8,8 @@ const polarity = (value) => {
 
 // Detect "zero crossing points"
 const isEdge = (() => {
-  let last;
-  return (sample) => {
+  let last: number;
+  return (sample: number) => {
     if (Math.abs(sample) < 0.085) return false;
     const x = polarity(sample) !== polarity(last ?? sample);
     last = sample;
@@ -19,8 +19,12 @@ const isEdge = (() => {
 
 class NoiseGenerator extends AudioWorkletProcessor {
   index = 0;
+  
+  constructor() {
+    super();
+  }
 
-  process(inputs) {
+  process(inputs: Float32Array[][]) {
     this.port.postMessage({ type: 'quantum', payload: inputs[0][0] });
     const input = inputs[0];
     const samples = input[0];
@@ -30,7 +34,7 @@ class NoiseGenerator extends AudioWorkletProcessor {
 
   last = 0;
 
-  window1(samples) {
+  window1(samples: Float32Array) {
     samples.forEach((sample, i) => {
       if (isEdge(sample)) {
         this.last = this.index + i;
@@ -42,4 +46,4 @@ class NoiseGenerator extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('decoder', NoiseGenerator);
+registerProcessor('decoder', NoiseGenerator as any);
