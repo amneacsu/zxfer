@@ -1,8 +1,12 @@
 import './style.css';
 import { AudioWorkletUrl } from 'audio-worklet';
 
-const width = 40000;
-const height = 256;
+import {
+  clear,
+  drawGrid,
+  drawEdges,
+  drawSamples,
+} from './oscilloscope';
 
 const audioCtx = new AudioContext();
 
@@ -17,13 +21,6 @@ const source = audioCtx.createMediaElementSource(audio);
 
 source.connect(decoder);
 // source.connect(audioCtx.destination);
-
-const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-canvas.width = width;
-canvas.height = height;
-const drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
-
-let horizontalStep = 5;
 
 const renderQuantums: Float32Array[] = [];
 const edges: number[] = [];
@@ -43,53 +40,11 @@ decoder.port.onmessage = (event) => {
   }
 };
 
-const clear = () => {
-  drawContext.clearRect(0, 0, width, height);
-};
-
-const drawVerticalLine = (x: number, color: string) => {
-  drawContext.beginPath();
-  drawContext.strokeStyle = color;
-  drawContext.moveTo(x, 0);
-  drawContext.lineTo(x, height);
-  drawContext.stroke();
-};
-
-const drawGrid = () => {
-  drawContext.beginPath();
-  drawContext.strokeStyle = '#777';
-  drawContext.moveTo(0, height / 2);
-  drawContext.lineTo(width, height / 2);
-  drawContext.stroke();
-};
-
-const drawEdges = () => {
-  edges.forEach((edge) => {
-    drawVerticalLine(edge * horizontalStep, '#00f');
-  });
-};
-
-const drawSamples = () => {
-  drawContext.strokeStyle = '#0f0';
-  drawContext.beginPath();
-  let x = 0;
-
-  renderQuantums.forEach((samples) => {
-    samples.forEach((sample) => {
-      const y = height / 2 - sample * height / 2;
-      drawContext.lineTo(x, y);
-      x += horizontalStep;
-    });
-  });
-
-  drawContext.stroke();
-};
-
 const tick = () => {
   clear();
   drawGrid();
-  drawEdges();
-  drawSamples();
+  drawEdges(edges);
+  drawSamples(renderQuantums);
 };
 
 // Wait for audio data
@@ -97,10 +52,4 @@ audio.addEventListener('loadeddata', () => {
   audio.currentTime = audio.duration / 2 + .33;
   audio.play();
   setInterval(tick, 200);
-});
-
-document.querySelector('#scale').addEventListener('input', (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  horizontalStep = target.valueAsNumber;
-  tick();
 });
