@@ -1,56 +1,64 @@
-const width = 40000;
-const height = 256;
+export class Oscilloscope {
+  zoom = .5;
+  width = 1024;
+  height = 256;
+  drawContext: CanvasRenderingContext2D;
 
-let horizontalStep = 5;
+  constructor() {
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    canvas.width = this.width;
+    canvas.height = this.height;
+    this.drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
+    
+    
+    canvas.addEventListener('mousewheel', this.handleZoom);
+  }
+  
+  handleZoom = (event: WheelEvent) => {
+    const step = 1000;
+    const nextZoom = this.zoom - event.deltaY / step;
+    this.zoom = Math.min(Math.max(nextZoom, 0.1), 1);
+  };
+  
+  clear = () => {
+    this.drawContext.clearRect(0, 0, this.width, this.height);
+  };
 
-const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-canvas.width = width;
-canvas.height = height;
-const drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
+  drawVerticalLine = (x: number, color: string) => {
+    this.drawContext.beginPath();
+    this.drawContext.strokeStyle = color;
+    this.drawContext.moveTo(x, 0);
+    this.drawContext.lineTo(x, this.height);
+    this.drawContext.stroke();
+  };
 
-export const clear = () => {
-  drawContext.clearRect(0, 0, width, height);
-};
+  drawGrid = () => {
+    this.drawContext.beginPath();
+    this.drawContext.strokeStyle = '#777';
+    this.drawContext.moveTo(0, this.height / 2);
+    this.drawContext.lineTo(this.width, this.height / 2);
+    this.drawContext.stroke();
+  };
 
-const drawVerticalLine = (x: number, color: string) => {
-  drawContext.beginPath();
-  drawContext.strokeStyle = color;
-  drawContext.moveTo(x, 0);
-  drawContext.lineTo(x, height);
-  drawContext.stroke();
-};
-
-export const drawGrid = () => {
-  drawContext.beginPath();
-  drawContext.strokeStyle = '#777';
-  drawContext.moveTo(0, height / 2);
-  drawContext.lineTo(width, height / 2);
-  drawContext.stroke();
-};
-
-export const drawEdges = (edges: number[]) => {
-  edges.forEach((edge) => {
-    drawVerticalLine(edge * horizontalStep, '#00f');
-  });
-};
-
-export const drawSamples = (renderQuantums: Float32Array[]) => {
-  drawContext.strokeStyle = '#0f0';
-  drawContext.beginPath();
-  let x = 0;
-
-  renderQuantums.forEach((samples) => {
-    samples.forEach((sample) => {
-      const y = height / 2 - sample * height / 2;
-      drawContext.lineTo(x, y);
-      x += horizontalStep;
+  drawEdges = (edges: number[]) => {
+    edges.forEach((edge) => {
+      this.drawVerticalLine(edge * 2 * this.zoom, '#00f');
     });
-  });
+  };
 
-  drawContext.stroke();
-};
+  drawSamples = (renderQuantums: Float32Array[]) => {
+    this.drawContext.strokeStyle = '#0f0';
+    this.drawContext.beginPath();
+    let x = 0;
 
-document.querySelector('#scale').addEventListener('input', (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  horizontalStep = target.valueAsNumber;
-});
+    renderQuantums.forEach((samples) => {
+      samples.forEach((sample) => {
+        const y = this.height / 2 - sample * this.height / 2;
+        this.drawContext.lineTo(x, y);
+        x += 2 * this.zoom;
+      });
+    });
+
+    this.drawContext.stroke();
+  };
+}
