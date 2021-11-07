@@ -10,5 +10,5 @@
       "audio-worklet": ["./src/worklets/index.ts"],
     },
   },
-  "files": ["src/index.ts"],
+  "files": ["src/index.ts", "src/decoder.ts"],
 }

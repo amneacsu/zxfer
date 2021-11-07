@@ -12,6 +12,7 @@
     "start": "webpack serve"
   },
   "devDependencies": {
+    "@types/audioworklet": "^0.0.22",
     "@typescript-eslint/eslint-plugin": "^4.28.4",
     "@typescript-eslint/parser": "^4.28.4",
     "css-loader": "^6.2.0",
