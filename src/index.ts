@@ -40,7 +40,7 @@ document.getElementById('play').addEventListener('click', async () => {
     viewer.drawSamples(renderQuantums);
   };
 
-  const audio = new Audio('1.wav');
+  const audio = new Audio('Jetpac.wav');
   const source = audioCtx.createMediaElementSource(audio);
 
   source.connect(decoder);
