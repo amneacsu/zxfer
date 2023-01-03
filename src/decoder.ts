@@ -19,7 +19,7 @@ const isEdge = (() => {
 
 class NoiseGenerator extends AudioWorkletProcessor {
   index = 0;
-  
+
   constructor() {
     super();
   }
@@ -29,7 +29,8 @@ class NoiseGenerator extends AudioWorkletProcessor {
     const input = inputs[0];
     const samples = input[0];
     this.window1(samples);
-    return this.index < 1024;
+    // return this.index < 1024;
+    return true;
   }
 
   last = 0;
