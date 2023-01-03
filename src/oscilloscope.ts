@@ -1,7 +1,7 @@
 export class Oscilloscope {
   zoom = .5;
-  width = 1024;
-  height = 256;
+  width = 2048;
+  height = 400;
   drawContext: CanvasRenderingContext2D;
 
   constructor() {
@@ -9,17 +9,16 @@ export class Oscilloscope {
     canvas.width = this.width;
     canvas.height = this.height;
     this.drawContext = canvas.getContext('2d') as CanvasRenderingContext2D;
-    
-    
+
     canvas.addEventListener('mousewheel', this.handleZoom);
   }
-  
+
   handleZoom = (event: WheelEvent) => {
     const step = 1000;
     const nextZoom = this.zoom - event.deltaY / step;
-    this.zoom = Math.min(Math.max(nextZoom, 0.1), 1);
+    this.zoom = Math.min(Math.max(nextZoom, 0.1), 2);
   };
-  
+
   clear = () => {
     this.drawContext.clearRect(0, 0, this.width, this.height);
   };

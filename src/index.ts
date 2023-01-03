@@ -49,6 +49,6 @@ document.getElementById('play').addEventListener('click', async () => {
   audio.addEventListener('loadeddata', () => {
     audio.currentTime = audio.duration / 2 + .33;
     audio.play();
-    setInterval(tick, 200);
+    setInterval(tick, 1000 / 60);
   });
 });
