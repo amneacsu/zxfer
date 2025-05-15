@@ -2,6 +2,7 @@ import './style.css';
 import { AudioWorkletUrl } from 'audio-worklet';
 
 import { Oscilloscope } from './oscilloscope';
+import wav from './data/Jetpac.wav';
 
 document.getElementById('play').addEventListener('click', async () => {
   const audioCtx = new AudioContext();
@@ -40,7 +41,7 @@ document.getElementById('play').addEventListener('click', async () => {
     viewer.drawSamples(renderQuantums);
   };
 
-  const audio = new Audio('Jetpac.wav');
+  const audio = new Audio(wav);
   const source = audioCtx.createMediaElementSource(audio);
 
   source.connect(decoder);
