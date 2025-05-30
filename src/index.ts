@@ -47,6 +47,8 @@ edges: ${edges.length}
   };
 
   const audio = new Audio(wav);
+  audio.controls = true;
+  document.body.appendChild(audio);
   const source = audioCtx.createMediaElementSource(audio);
 
   source.connect(decoder);
