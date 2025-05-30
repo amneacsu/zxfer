@@ -30,6 +30,11 @@ document.getElementById('play').addEventListener('click', async () => {
         edges.push(payload);
         break;
     }
+
+    document.getElementById('debug').innerHTML = `
+render quantums: ${renderQuantums.length}
+edges: ${edges.length}
+`;
   };
 
   const viewer = new Oscilloscope();
