@@ -59,4 +59,8 @@ edges: ${edges.length}
     audio.play();
     setInterval(tick, 1000 / 60);
   });
+
+  audio.addEventListener('ended', () => {
+    decoder.port.close();
+  });
 });
