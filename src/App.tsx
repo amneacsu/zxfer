@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 
-const src = '/audio/Manic_Miner.wav';
-// const src = '/audio/Jetpac.wav';
-// const src = '/audio/1.wav';
+const src = './audio/Manic_Miner.wav';
+// const src = './audio/Jetpac.wav';
+// const src = './audio/1.wav';
 
 export const App = () => {
   const dataRef = useRef<HTMLPreElement>(null);
