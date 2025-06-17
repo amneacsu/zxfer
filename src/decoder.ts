@@ -1,4 +1,4 @@
-import { DecoderState } from './types';
+import { DecoderState } from './types.ts';
 
 const polarity = (value: number) => {
   const threshold = 0.01;
@@ -7,17 +7,6 @@ const polarity = (value: number) => {
   else if (value < -threshold) return -1;
   else return 0;
 };
-
-// Detect "zero crossing points"
-const isEdge = (() => {
-  let last: number;
-  return (sample: number) => {
-    if (Math.abs(sample) < 0.085) return false;
-    const x = polarity(sample) !== polarity(last ?? sample);
-    last = sample;
-    return x;
-  };
-})();
 
 class Decoder extends AudioWorkletProcessor {
   index = 0;
@@ -34,20 +23,22 @@ class Decoder extends AudioWorkletProcessor {
   }
 
   setState(newState: DecoderState) {
+    if (this.state !== newState) {
+      this.port.postMessage({
+        type: 'statechange',
+        payload: newState,
+      });
+    }
+
     this.state = newState;
-    this.port.postMessage({
-      type: 'newState',
-      payload: newState,
-    });
   }
 
   process(inputs: Float32Array[][]) {
     this.port.postMessage({ type: 'quantum', payload: inputs[0][0] });
     const input = inputs[0];
     const samples = input[0];
-    // console.log(samples.length);
 
-    samples.forEach((sample, i) => {
+    samples.forEach((sample) => {
       const samplePolarity = polarity(sample);
 
       if (samplePolarity !== this.polarity) {
@@ -96,8 +87,6 @@ class Decoder extends AudioWorkletProcessor {
               }
               break;
           }
-
-          this.port.postMessage({ type: 'polarity', payload: { count: this.count, polarity: this.polarity } });
         }
 
         // reset
@@ -105,10 +94,6 @@ class Decoder extends AudioWorkletProcessor {
         this.count = 1;
       } else {
         this.count += 1;
-      }
-
-      if (isEdge(sample)) {
-        this.port.postMessage({ type: 'edge', payload: this.index + i });
       }
     });
 

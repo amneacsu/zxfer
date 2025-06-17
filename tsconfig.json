@@ -1,5 +1,10 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "jsx": "react",
+    "strict": true,
     "outDir": "./serve/built",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
@@ -10,5 +15,5 @@
       "audio-worklet": ["./src/worklets/index.ts"],
     },
   },
-  "files": ["src/index.ts", "src/decoder.ts"],
+  // "files": ["src/index.tsx", "src/decoder.ts"],
 }
