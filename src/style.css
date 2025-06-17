@@ -1,9 +1,22 @@
 body {
   background: #000;
   color: #fff;
-  overflow-x: scroll;
+  padding: 32px;
 }
 
 canvas {
   border: #999 1px solid;
+}
+
+pre {
+  word-break: break-all;
+  line-break: anywhere;
+  white-space: pre-wrap;
+  font-size: 20px;
+}
+
+#data {
+  width: 64ch;
+  max-height: 300px;
+  overflow: scroll;
 }

@@ -1,0 +1,6 @@
+declare module '*.mp3'
+declare module '*.mp4'
+declare module '*.opus'
+declare module '*.flac'
+declare module '*.m4a'
+declare module '*.wav'
