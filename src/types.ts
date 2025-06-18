@@ -14,8 +14,8 @@ export type DecoderMessage = (
     payload: Float32Array<ArrayBufferLike>;
   }
   | {
-    type: 'bit';
-    payload: 1 | 0;
+    type: 'byte';
+    payload: number;
   }
   | {
     type: 'reset';
@@ -33,8 +33,8 @@ export type DecoderListener = (
     handler: (payload: Float32Array<ArrayBufferLike>) => void;
   }
   | {
-    type: 'bit';
-    handler: (payload: 1 | 0) => void;
+    type: 'byte';
+    handler: (payload: number) => void;
   }
   | {
     type: 'reset';

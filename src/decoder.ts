@@ -17,6 +17,7 @@ class Decoder extends AudioWorkletProcessor {
   syncPulse2 = false;
   low = 0;
   high = 0;
+  bitBuffer: (1 | 0)[] = [];
 
   constructor() {
     super();
@@ -78,10 +79,14 @@ class Decoder extends AudioWorkletProcessor {
                 this.high += 1;
               }
               if (this.low === 2 || this.high === 2) {
-                this.port.postMessage({
-                  type: 'bit',
-                  payload: this.low === 2 ? 0 : 1,
-                });
+                this.bitBuffer.push(this.low === 2 ? 0 : 1);
+                if (this.bitBuffer.length === 8) {
+                  this.port.postMessage({
+                    type: 'byte',
+                    payload: parseInt(this.bitBuffer.join(''), 2),
+                  });
+                  this.bitBuffer = [];
+                }
                 this.low = 0;
                 this.high = 0;
               }

@@ -31,8 +31,8 @@ export class ZxLoader {
   private emit(event: DecoderMessage) {
     this.listeners.forEach((listener) => {
       switch (event.type) {
-        case 'bit':
-          if (listener.type === 'bit') listener.handler(event.payload);
+        case 'byte':
+          if (listener.type === 'byte') listener.handler(event.payload);
           break;
         case 'quantum':
           if (listener.type === 'quantum') listener.handler(event.payload);
@@ -52,8 +52,8 @@ export class ZxLoader {
     this.listen({ type: 'quantum', handler });
   }
 
-  onBit(handler: (bit: 1 | 0) => void) {
-    this.listen({ type: 'bit', handler });
+  onByte(handler: (bit: number) => void) {
+    this.listen({ type: 'byte', handler });
   }
 
   onReset(handler: () => void) {
@@ -76,9 +76,9 @@ export class ZxLoader {
     source.connect(decoder);
     // source.connect(audioCtx.destination);
 
-    this.audio.addEventListener('ended', () => {
-      decoder.port.close();
-    });
+    // this.audio.addEventListener('ended', () => {
+    //   decoder.port.close();
+    // });
 
     this.audio.addEventListener('play', () => {
       audioCtx.resume();
