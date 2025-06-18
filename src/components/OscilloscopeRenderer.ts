@@ -41,10 +41,11 @@ export class OscilloscopeRenderer {
     this.drawContext.strokeStyle = '#0f0';
     this.drawContext.beginPath();
     let x = 0;
+    const halfHeight = this.canvas.height / 2;
     const distanceBetweenSamples = this.canvas.width / renderQuantum.length;
 
     renderQuantum.forEach((sample) => {
-      const y = this.canvas.height / 2 - sample * this.canvas.height / 2;
+      const y = halfHeight - sample * halfHeight;
       this.drawContext.lineTo(x, y);
       x += distanceBetweenSamples;
     });

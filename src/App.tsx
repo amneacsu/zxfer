@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { HexView } from './components/HexView.tsx';
@@ -10,7 +10,7 @@ const src = './audio/Manic_Miner.wav';
 export const App = () => {
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
-  const [bits, setBits] = useState<number[]>([]);
+  const [bytes, setBytes] = useState<number[]>([]);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const run = useCallback(async () => {
@@ -25,8 +25,8 @@ export const App = () => {
       setDecoderState(newState);
     });
 
-    _loader.onBit((bit) => {
-      setBits((prev) => [...prev, bit]);
+    _loader.onByte((byte) => {
+      setBytes((prev) => [...prev, byte]);
     });
 
     _loader.onReset(() => {
@@ -39,15 +39,6 @@ export const App = () => {
   useEffect(() => {
     run();
   }, [run]);
-
-  const bytes = useMemo(() => {
-    const _bytes = [];
-    for (let i = 0; i < bits.length; i += 8) {
-      const x = bits.slice(i, i + 8).join('');
-      _bytes.push(parseInt(x, 2));
-    }
-    return _bytes;
-  }, [bits]);
 
   return (
     <div>
@@ -68,7 +59,7 @@ export const App = () => {
       <pre>
         {JSON.stringify({
           state: decoderState,
-          bitLen: bits.length,
+          byteLen: bytes.length,
         }, null, 2)}
       </pre>
       <HexView bytes={bytes} />
