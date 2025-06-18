@@ -1,6 +1,6 @@
 export enum DecoderState {
-  WAITLEAD = 'WAITLEAD',
-  LEAD = 'LEAD',
+  WAITPILOT = 'WAITPILOT',
+  PILOT = 'PILOT',
   PROG = 'PROG',
 }
 
@@ -18,7 +18,7 @@ export type DecoderMessage = (
     payload: number;
   }
   | {
-    type: 'reset';
+    type: 'init';
     payload?: never;
   }
   | {
@@ -41,7 +41,7 @@ export type DecoderListener = (
     handler: (payload: number) => void;
   }
   | {
-    type: 'reset';
+    type: 'init';
     handler: () => void;
   }
   | {
