@@ -60,11 +60,6 @@ export class ZxLoader {
     this.listen({ type: 'reset', handler });
   }
 
-  // private setState(newState: DecoderState) {
-  //   this.state = newState;
-  //   this.emit({ type: 'statechange', payload: newState });
-  // }
-
   async main() {
     const audioCtx = new AudioContext();
     await audioCtx.audioWorklet.addModule(
@@ -79,7 +74,7 @@ export class ZxLoader {
 
     const source = audioCtx.createMediaElementSource(this.audio);
     source.connect(decoder);
-    source.connect(audioCtx.destination);
+    // source.connect(audioCtx.destination);
 
     this.audio.addEventListener('ended', () => {
       decoder.port.close();

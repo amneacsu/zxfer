@@ -29,6 +29,7 @@ export default [
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/semi': ['error', 'always'],
       '@typescript-eslint/no-unused-vars': ['error'],
+      '@typescript-eslint/no-unnecessary-condition': ['error'],
     },
   },
 ];
