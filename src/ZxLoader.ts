@@ -47,6 +47,9 @@ export class ZxLoader {
         case 'reset':
           if (listener.type === 'reset') listener.handler();
           break;
+        case 'block':
+          if (listener.type === 'block') listener.handler(event.payload);
+          break;
       }
     });
   }
@@ -65,6 +68,10 @@ export class ZxLoader {
 
   onReset(handler: () => void) {
     this.listen({ type: 'reset', handler });
+  }
+
+  onBlock(handler: (block: number[]) => void) {
+    this.listen({ type: 'block', handler });
   }
 
   async init() {

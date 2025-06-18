@@ -10,13 +10,13 @@ const polarity = (value: number) => {
 
 class Decoder extends AudioWorkletProcessor {
   polarity = -1;
-  count = 0;
   state = DecoderState.WAITLEAD;
   syncPulse1 = false;
   syncPulse2 = false;
-  low = 0;
-  high = 0;
   bitBuffer: (1 | 0)[] = [];
+  byteBuffer: number[] = [];
+  highStates = 0;
+  lowStates = 0;
 
   constructor() {
     super();
@@ -30,16 +30,18 @@ class Decoder extends AudioWorkletProcessor {
 
   reset() {
     this.bitBuffer = [];
-    this.low = 0;
-    this.high = 0;
+    this.byteBuffer = [];
+    this.lowStates = 0;
+    this.highStates = 0;
     this.syncPulse1 = false;
     this.syncPulse2 = false;
     this.state = DecoderState.WAITLEAD;
-    this.count = 0;
     this.polarity = -1;
   }
 
   setState(newState: DecoderState) {
+    console.log('statechange', newState);
+
     if (this.state !== newState) {
       this.port.postMessage({
         type: 'statechange',
@@ -58,30 +60,36 @@ class Decoder extends AudioWorkletProcessor {
     samples.forEach((sample) => {
       const samplePolarity = polarity(sample);
 
-      if (samplePolarity !== this.polarity) {
-        if (this.polarity !== 0 && this.count > 0) {
-          if (this.count > 28) {
-            this.setState(DecoderState.LEAD);
-            this.syncPulse1 = false;
-            this.syncPulse2 = false;
-          }
+      if (samplePolarity === this.polarity) {
+        switch (samplePolarity) {
+          case 1: this.highStates += 1; break;
+          case -1: this.lowStates += 1; break;
+          case 0: break;
+        }
+      } else {
+        if (this.lowStates > 0 && this.highStates > 0) {
+          const states = this.lowStates + this.highStates;
 
           switch (this.state) {
             case DecoderState.WAITLEAD:
-              if (this.count > 28) {
+              if (states > 50) {
                 this.setState(DecoderState.LEAD);
                 this.syncPulse1 = false;
                 this.syncPulse2 = false;
               }
               break;
             case DecoderState.LEAD:
-              if (this.count < 20) {
+              if (states < 40) {
                 if (!this.syncPulse1) {
+                  console.log('heard 1st pulse');
                   this.syncPulse1 = true;
                   break;
                 }
                 if (!this.syncPulse2) {
+                  console.log('heard 2nd pulse');
                   this.syncPulse2 = true;
+                  // for some reason the 2 sync pulses count as the first bit:
+                  this.bitBuffer.push(0);
                   this.setState(DecoderState.PROG);
                   break;
                 }
@@ -89,32 +97,36 @@ class Decoder extends AudioWorkletProcessor {
               }
               break;
             case DecoderState.PROG:
-              if (this.count < 15) {
-                this.low += 1;
-              } else {
-                this.high += 1;
+              if (states > 2500) {
+                this.port.postMessage({
+                  type: 'block',
+                  payload: this.byteBuffer,
+                });
+                this.byteBuffer = [];
+                this.setState(DecoderState.WAITLEAD);
+                break;
               }
-              if (this.low === 2 || this.high === 2) {
-                this.bitBuffer.push(this.low === 2 ? 0 : 1);
-                if (this.bitBuffer.length === 8) {
-                  this.port.postMessage({
-                    type: 'byte',
-                    payload: parseInt(this.bitBuffer.join(''), 2),
-                  });
-                  this.bitBuffer = [];
-                }
-                this.low = 0;
-                this.high = 0;
+
+              const bit = states < 25 ? 0 : 1;
+
+              this.bitBuffer.push(bit);
+              if (this.bitBuffer.length === 8) {
+                const byte = parseInt(this.bitBuffer.join(''), 2);
+                this.byteBuffer.push(byte);
+
+                this.port.postMessage({
+                  type: 'byte',
+                  payload: byte,
+                });
+                this.bitBuffer = [];
               }
               break;
           }
-        }
 
-        // reset
+          this.lowStates = 0;
+          this.highStates = 0;
+        }
         this.polarity = samplePolarity;
-        this.count = 1;
-      } else {
-        this.count += 1;
       }
     });
 

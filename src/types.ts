@@ -21,6 +21,10 @@ export type DecoderMessage = (
     type: 'reset';
     payload?: never;
   }
+  | {
+    type: 'block';
+    payload: number[];
+  }
 );
 
 export type DecoderListener = (
@@ -39,5 +43,9 @@ export type DecoderListener = (
   | {
     type: 'reset';
     handler: () => void;
+  }
+  | {
+    type: 'block';
+    handler: (payload: number[]) => void;
   }
 );
