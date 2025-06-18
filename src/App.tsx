@@ -18,6 +18,7 @@ export const App = () => {
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
   const [bytes, setBytes] = useState<number[]>([]);
+  const [blocks, setBlocks] = useState<number[][]>([]);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const run = useCallback(async () => {
@@ -35,6 +36,10 @@ export const App = () => {
 
     _loader.onByte((byte) => {
       setBytes((prev) => [...prev, byte]);
+    });
+
+    _loader.onBlock((block) => {
+      setBlocks((prev) => [...prev, block]);
     });
 
     _loader.onReset(() => {
@@ -89,6 +94,9 @@ export const App = () => {
       >
         clear memory
       </button>
+      {blocks.map((block, index) => (
+        <HexView key={index} bytes={block} />
+      ))}
     </div>
   );
 };
