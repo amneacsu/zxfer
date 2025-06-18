@@ -3,11 +3,18 @@ import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { HexView } from './components/HexView.tsx';
 
-const src = './audio/Manic_Miner.wav';
+// const src = './audio/Manic_Miner.wav';
 // const src = './audio/Jetpac.wav';
 // const src = './audio/1.wav';
 
+const audioFiles = [
+  './audio/Manic_Miner.wav',
+  './audio/Jetpac.wav',
+  './audio/1.wav',
+];
+
 export const App = () => {
+  const [src, setSrc] = useState(audioFiles[0]);
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
   const [bytes, setBytes] = useState<number[]>([]);
@@ -42,6 +49,17 @@ export const App = () => {
 
   return (
     <div>
+      <div>
+        <select value={src} onChange={(event) => {
+          setSrc(event.target.value);
+        }}>
+          {audioFiles.map((audioFile, index) => (
+            <option key={index} value={audioFile}>{audioFile}</option>
+          ))}
+        </select>
+      </div>
+      <br />
+      <br />
       <audio
         ref={audioRef}
         src={src}
@@ -63,6 +81,9 @@ export const App = () => {
         }, null, 2)}
       </pre>
       <HexView bytes={bytes} />
+      <button type="button" onClick={() => setBytes([])}>
+        clear memory
+      </button>
     </div>
   );
 };

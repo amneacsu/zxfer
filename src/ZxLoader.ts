@@ -40,6 +40,9 @@ export class ZxLoader {
         case 'statechange':
           if (listener.type === 'statechange') listener.handler(event.payload);
           break;
+        case 'reset':
+          if (listener.type === 'reset') listener.handler();
+          break;
       }
     });
   }
