@@ -6,21 +6,29 @@ export class OscilloscopeRenderer {
   constructor(element: HTMLCanvasElement) {
     this.canvas = element;
     this.drawContext = this.canvas.getContext('2d') as CanvasRenderingContext2D;
-
-    this.canvas.addEventListener('mousewheel', this.handleZoom);
+    this.drawContext.lineWidth = 4;
+    this.drawContext.shadowColor = '#0f0';
   }
 
-  handleZoom = (event: Event) => {
-    const step = 100;
-    const nextZoom = this.zoom - (event as WheelEvent).deltaY / step;
-    this.zoom = Math.min(Math.max(nextZoom, 0.1), 4);
+  fade = () => {
+    const lastImage = this.drawContext.getImageData(0, 0, this.canvas.width, this.canvas.height);
+    const pixelData = lastImage.data;
+
+    for (let i = 3; i < pixelData.length; i += 4) {
+      pixelData[i] -= 100;
+    }
+
+    this.drawContext.putImageData(lastImage, 0, 0);
   };
 
   clear = () => {
-    this.drawContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // this.drawContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.drawContext.fillStyle = '#000000f0';
+    this.drawContext.fillRect(0, 0, this.canvas.width, this.canvas.height);
   };
 
   drawGrid = () => {
+    this.drawContext.shadowBlur = 0;
     this.drawContext.beginPath();
     this.drawContext.strokeStyle = '#777';
     this.drawContext.moveTo(0, this.canvas.height / 2);
@@ -29,17 +37,16 @@ export class OscilloscopeRenderer {
   };
 
   drawSamples = (renderQuantum: Float32Array) => {
-    if (!renderQuantum) return;
+    this.drawContext.shadowBlur = 10;
     this.drawContext.strokeStyle = '#0f0';
-    this.drawContext.lineWidth = 4;
     this.drawContext.beginPath();
     let x = 0;
-    const distanceBetweenSamples = this.canvas.width / renderQuantum.length * 2;
+    const distanceBetweenSamples = this.canvas.width / renderQuantum.length;
 
     renderQuantum.forEach((sample) => {
       const y = this.canvas.height / 2 - sample * this.canvas.height / 2;
       this.drawContext.lineTo(x, y);
-      x += distanceBetweenSamples * this.zoom;
+      x += distanceBetweenSamples;
     });
 
     this.drawContext.stroke();

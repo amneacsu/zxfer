@@ -2,11 +2,17 @@ import React, { useEffect, useRef } from 'react';
 import { OscilloscopeRenderer } from './OscilloscopeRenderer.ts';
 import { ZxLoader } from '../ZxLoader.ts';
 
+interface OscilloscopeProps {
+  loader: ZxLoader;
+  width?: number;
+  height?: number;
+}
+
 export const Oscilloscope = ({
   loader,
-}: {
-  loader: ZxLoader;
-}) => {
+  width = 1024,
+  height = 400,
+}: OscilloscopeProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -15,6 +21,7 @@ export const Oscilloscope = ({
     const renderer = new OscilloscopeRenderer(canvasElement);
     return loader.onQuantum((quantum) => {
       renderer.clear();
+      // renderer.fade();
       renderer.drawGrid();
       renderer.drawSamples(quantum);
     });
@@ -24,8 +31,8 @@ export const Oscilloscope = ({
   return (
     <canvas
       ref={canvasRef}
-      width={1024}
-      height={400}
+      width={width}
+      height={height}
     />
   );
 };

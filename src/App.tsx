@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
+import { HexView } from './components/HexView.tsx';
 
 const src = './audio/Manic_Miner.wav';
 // const src = './audio/Jetpac.wav';
 // const src = './audio/1.wav';
 
 export const App = () => {
-  const dataRef = useRef<HTMLPreElement>(null);
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
   const [bits, setBits] = useState<number[]>([]);
@@ -15,7 +15,6 @@ export const App = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
   const run = useCallback(async () => {
     const audioElement = audioRef.current;
-    const dataElement = dataRef.current;
     if (!audioElement) return;
     const _loader = new ZxLoader({
       audio: audioElement,
@@ -28,9 +27,6 @@ export const App = () => {
 
     _loader.onBit((bit) => {
       setBits((prev) => [...prev, bit]);
-      if (dataElement) {
-        dataElement.scrollTop = dataElement.scrollHeight;
-      }
     });
 
     _loader.onReset(() => {
@@ -44,14 +40,13 @@ export const App = () => {
     run();
   }, [run]);
 
-  const data = useMemo(() => {
-    const bytes = [];
+  const bytes = useMemo(() => {
+    const _bytes = [];
     for (let i = 0; i < bits.length; i += 8) {
       const x = bits.slice(i, i + 8).join('');
-      bytes.push(parseInt(x, 2));
+      _bytes.push(parseInt(x, 2));
     }
-
-    return String.fromCharCode(...bytes);
+    return _bytes;
   }, [bits]);
 
   return (
@@ -65,6 +60,8 @@ export const App = () => {
         {loader && (
           <Oscilloscope
             loader={loader}
+            width={640}
+            height={400}
           />
         )}
       </div>
@@ -74,9 +71,7 @@ export const App = () => {
           bitLen: bits.length,
         }, null, 2)}
       </pre>
-      <pre id="data" ref={dataRef}>
-        {data.replace(/[\x00-\x1F\x7F-\x9F\u200B-\u200F\u2028\u2029\u2060\uFEFF]/g, '.')}
-      </pre>
+      <HexView bytes={bytes} />
     </div>
   );
 };
