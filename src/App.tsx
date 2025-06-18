@@ -26,6 +26,7 @@ export const App = () => {
     const _loader = new ZxLoader({
       audio: audioElement,
     });
+    await _loader.init();
     setLoader(_loader);
 
     _loader.onStateChange((newState) => {
@@ -39,8 +40,6 @@ export const App = () => {
     _loader.onReset(() => {
       setDecoderState(_loader.state);
     });
-
-    await _loader.main();
   }, []);
 
   useEffect(() => {
@@ -81,7 +80,13 @@ export const App = () => {
         }, null, 2)}
       </pre>
       <HexView bytes={bytes} />
-      <button type="button" onClick={() => setBytes([])}>
+      <button
+        type="button"
+        onClick={() => {
+          loader?.reset();
+          setBytes([]);
+        }}
+      >
         clear memory
       </button>
     </div>

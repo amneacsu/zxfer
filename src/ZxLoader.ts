@@ -8,16 +8,20 @@ interface ZxLoaderOptions {
 
 export class ZxLoader {
   audio: HTMLAudioElement;
+  audioCtx: AudioContext;
   state = DecoderState.WAITLEAD;
   listeners: DecoderListener[] = [];
+  decoder?: AudioWorkletNode;
 
   constructor(opts: ZxLoaderOptions) {
     this.audio = opts.audio;
+    this.audioCtx = new AudioContext();
   }
 
   reset() {
     this.state = DecoderState.WAITLEAD;
     this.emit({ type: 'reset' });
+    this.decoder?.port.postMessage('reset');
   }
 
   private listen(listener: DecoderListener) {
@@ -63,20 +67,16 @@ export class ZxLoader {
     this.listen({ type: 'reset', handler });
   }
 
-  async main() {
-    const audioCtx = new AudioContext();
-    await audioCtx.audioWorklet.addModule(
+  async init() {
+    await this.audioCtx.audioWorklet.addModule(
       new AudioWorkletUrl(new URL('./decoder.ts', import.meta.url)) as string,
     );
-
-    const decoder = new AudioWorkletNode(audioCtx, 'decoder');
-
-    decoder.port.onmessage = (event: MessageEvent<DecoderMessage>) => {
+    this.decoder = new AudioWorkletNode(this.audioCtx, 'decoder');
+    this.decoder.port.onmessage = (event: MessageEvent<DecoderMessage>) => {
       this.emit(event.data);
     };
-
-    const source = audioCtx.createMediaElementSource(this.audio);
-    source.connect(decoder);
+    const source = this.audioCtx.createMediaElementSource(this.audio);
+    source.connect(this.decoder);
     // source.connect(audioCtx.destination);
 
     // this.audio.addEventListener('ended', () => {
@@ -84,7 +84,9 @@ export class ZxLoader {
     // });
 
     this.audio.addEventListener('play', () => {
-      audioCtx.resume();
+      this.audioCtx.resume();
     });
+
+    console.log('loader initialized');
   };
 };

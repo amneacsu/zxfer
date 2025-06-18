@@ -9,7 +9,6 @@ const polarity = (value: number) => {
 };
 
 class Decoder extends AudioWorkletProcessor {
-  index = 0;
   polarity = -1;
   count = 0;
   state = DecoderState.WAITLEAD;
@@ -21,6 +20,23 @@ class Decoder extends AudioWorkletProcessor {
 
   constructor() {
     super();
+
+    this.port.start();
+
+    this.port.addEventListener('message', (event) => {
+      if (event.data === 'reset') this.reset();
+    });
+  }
+
+  reset() {
+    this.bitBuffer = [];
+    this.low = 0;
+    this.high = 0;
+    this.syncPulse1 = false;
+    this.syncPulse2 = false;
+    this.state = DecoderState.WAITLEAD;
+    this.count = 0;
+    this.polarity = -1;
   }
 
   setState(newState: DecoderState) {
@@ -102,9 +118,6 @@ class Decoder extends AudioWorkletProcessor {
       }
     });
 
-    this.index += samples.length;
-
-    // return this.index < 24096;
     return true;
   }
 }

@@ -19,6 +19,9 @@ export const Oscilloscope = ({
     const canvasElement = canvasRef.current;
     if (!canvasElement) return;
     const renderer = new OscilloscopeRenderer(canvasElement);
+    renderer.clear();
+    renderer.drawGrid();
+
     return loader.onQuantum((quantum) => {
       renderer.clear();
       // renderer.fade();
