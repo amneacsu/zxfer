@@ -6,6 +6,7 @@ import { HexView } from './components/HexView.tsx';
 const audioFiles = [
   './audio/Manic_Miner.wav',
   './audio/Jetpac.wav',
+  './audio/Zynaps.wav',
   './audio/1.wav',
 ];
 
