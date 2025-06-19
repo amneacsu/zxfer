@@ -6,6 +6,7 @@ body {
 
 canvas {
   border: #999 1px solid;
+  background-color: #000;
 }
 
 nav {
