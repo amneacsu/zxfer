@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
-import { HexView } from './components/HexView.tsx';
+import { DataBlock } from './components/DataBlock.tsx';
 
 const audioFiles = [
   './audio/Manic_Miner.wav',
   './audio/Jetpac.wav',
   './audio/Zynaps.wav',
-  './audio/1.wav',
+  './audio/bad.wav',
 ];
 
 export const App = () => {
@@ -129,10 +129,11 @@ export const App = () => {
       )}
 
       {blocks.map((block, index) => (
-        <React.Fragment key={index}>
-          <h3>Block {index}</h3>
-          <HexView bytes={block} />
-        </React.Fragment>
+        <DataBlock
+          key={index}
+          index={index}
+          data={block}
+        />
       ))}
     </>
   );
