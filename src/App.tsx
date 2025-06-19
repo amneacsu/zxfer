@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { DataBlock } from './components/DataBlock.tsx';
+import { LoadingBars } from './components/LoadingBars.tsx';
 
 const audioFiles = [
   './audio/Manic_Miner.wav',
@@ -78,63 +79,71 @@ export const App = () => {
 
   return (
     <>
-      <nav>
-        <select value={src} onChange={(event) => {
-          setSrc(event.target.value);
-          setIsPlaying(false);
-          handleClear();
-        }}>
-          {audioFiles.map((audioFile, index) => (
-            <option key={index} value={audioFile}>{audioFile}</option>
-          ))}
-        </select>
-
-        <button onClick={handlePlay} type="button">
-          {isPlaying ? 'Pause' : 'Play' }
-        </button>
-
-        <button onClick={handleRewind} type="button">
-          Rewind
-        </button>
-
-        <button
-          type="button"
-          onClick={() => {
+      <div id="ui">
+        <nav>
+          <select value={src} onChange={(event) => {
+            setSrc(event.target.value);
+            setIsPlaying(false);
             handleClear();
-          }}
-        >
-          Clear memory
-        </button>
+          }}>
+            {audioFiles.map((audioFile, index) => (
+              <option key={index} value={audioFile}>{audioFile}</option>
+            ))}
+          </select>
 
-        <pre>
-          state: {decoderState}
-        </pre>
-      </nav>
+          <button onClick={handlePlay} type="button">
+            {isPlaying ? 'Pause' : 'Play' }
+          </button>
 
-      <audio
-        hidden
-        ref={audioRef}
-        src={src}
-        controls
-      />
+          <button onClick={handleRewind} type="button">
+            Rewind
+          </button>
 
-      <br />
+          <button
+            type="button"
+            onClick={() => {
+              handleClear();
+            }}
+          >
+            Clear memory
+          </button>
+
+          <pre>
+            state: {decoderState}
+          </pre>
+        </nav>
+
+        <audio
+          hidden
+          ref={audioRef}
+          src={src}
+          controls
+        />
+
+        <br />
+
+        {loader && (
+          <Oscilloscope
+            loader={loader}
+            width={640}
+            height={400}
+          />
+        )}
+
+        {blocks.map((block, index) => (
+          <DataBlock
+            key={index}
+            index={index}
+            data={block}
+          />
+        ))}
+      </div>
 
       {loader && (
-        <Oscilloscope
+        <LoadingBars
           loader={loader}
-          width={640}
-          height={400}
         />
       )}
-
-      {blocks.map((block, index) => (
-        <DataBlock
-          key={index}
-          index={index}
-          data={block}
-        />
-      ))}
     </>
   );
 };
