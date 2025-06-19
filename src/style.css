@@ -60,6 +60,6 @@ select, button {
   border-radius: 2px;
 }
 
-select:focus-visible, button:focus-visible {
+select:focus, button:focus {
   outline-width: 2px;
 }
