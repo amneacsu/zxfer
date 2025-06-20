@@ -1,6 +1,7 @@
 body {
   font-family: 'Courier New', Courier, monospace;
   background: #fff;
+  overflow: hidden;
 }
 
 canvas {
@@ -16,7 +17,7 @@ nav {
   gap: 8px;
   font-size: 14px;
   background-color: #fff;
-  padding: 4px;
+  padding: 16px 0;
   border-bottom: #ddd 2px dashed;
 }
 
@@ -66,7 +67,7 @@ select:focus, button:focus {
 #ui {
   position: absolute;
   inset: 32px 120px;
-  padding: 20px;
+  padding: 0 20px 20px;
   background-color: #fff;
   overflow-y: auto;
 }
