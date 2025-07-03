@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
     "module": "esnext",
-    "target": "es2017",
+    "target": "es2022",
     "allowJs": true,
     "paths": {
       "audio-worklet": ["./src/worklets/index.ts"],
