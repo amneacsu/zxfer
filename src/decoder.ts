@@ -48,9 +48,11 @@ class Decoder extends AudioWorkletProcessor {
   }
 
   process(inputs: Float32Array[][]) {
-    this.port.postMessage({ type: 'quantum', payload: inputs[0][0] });
-    const input = inputs[0];
-    const samples = input[0];
+    const input = inputs.at(0);
+    const samples = input?.at(0);
+    if (!samples) return false;
+
+    this.port.postMessage({ type: 'quantum', payload: samples });
 
     samples.forEach((sample) => {
       const samplePolarity = polarity(sample);
