@@ -15,8 +15,8 @@
     "lint": "eslint src"
   },
   "devDependencies": {
-    "@rspack/cli": "^1.4.6",
-    "@rspack/core": "^1.4.6",
+    "@rspack/cli": "^1.4.11",
+    "@rspack/core": "^1.4.11",
     "@stylistic/eslint-plugin": "^5.2.2",
     "@types/audioworklet": "^0.0.77",
     "@types/react": "^19.1.8",
