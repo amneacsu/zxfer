@@ -16,7 +16,6 @@ export const App = () => {
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
   const [blocks, setBlocks] = useState<number[][]>([]);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const handleClear = useCallback(() => {
     loader?.reset();
@@ -60,10 +59,8 @@ export const App = () => {
 
     if (audioElement.paused) {
       audioElement.play();
-      setIsPlaying(true);
     } else {
       audioElement.pause();
-      setIsPlaying(false);
     }
   }, []);
 
@@ -83,7 +80,6 @@ export const App = () => {
         <nav>
           <select value={src} onChange={(event) => {
             setSrc(event.target.value);
-            setIsPlaying(false);
             handleClear();
           }}>
             {audioFiles.map((audioFile, index) => (
@@ -92,7 +88,7 @@ export const App = () => {
           </select>
 
           <button onClick={handlePlay} type="button">
-            {isPlaying ? 'Pause' : 'Play' }
+            Play / Pause
           </button>
 
           <button onClick={handleRewind} type="button">
