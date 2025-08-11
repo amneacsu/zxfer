@@ -12,6 +12,7 @@ const audioFiles = [
 ];
 
 export const App = () => {
+  const [loadingBarsVisible, setLoadingBarsVisible] = useState(false);
   const [src, setSrc] = useState(audioFiles[0]);
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
@@ -106,6 +107,19 @@ export const App = () => {
             </button>
           </nav>
 
+          <fieldset>
+            <label>
+              <input
+                type="checkbox"
+                checked={loadingBarsVisible}
+                onChange={(event) => {
+                  setLoadingBarsVisible(event.target.checked);
+                }}
+              />
+              Loading bars
+            </label>
+          </fieldset>
+
           <pre>
             state: {decoderState}
           </pre>
@@ -137,7 +151,7 @@ export const App = () => {
         controls
       />
 
-      {loader && (
+      {loader && loadingBarsVisible && (
         <LoadingBars
           loader={loader}
         />

@@ -1,11 +1,10 @@
 body {
-  font-family: 'Courier New', Courier, monospace;
-  background: #fff;
+  font-family: Arial, sans-serif;
+  background: #000;
   overflow: hidden;
 }
 
 canvas {
-  border: #999 1px solid;
   background-color: #000;
 }
 
