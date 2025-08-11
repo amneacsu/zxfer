@@ -77,7 +77,7 @@ export const App = () => {
   return (
     <>
       <div id="ui">
-        <nav>
+        <div id="sidebar">
           <select value={src} onChange={(event) => {
             setSrc(event.target.value);
             handleClear();
@@ -87,53 +87,55 @@ export const App = () => {
             ))}
           </select>
 
-          <button onClick={handlePlay} type="button">
-            Play / Pause
-          </button>
+          <nav>
+            <button onClick={handlePlay} type="button">
+              Play / Pause
+            </button>
 
-          <button onClick={handleRewind} type="button">
-            Rewind
-          </button>
+            <button onClick={handleRewind} type="button">
+              Rewind
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              handleClear();
-            }}
-          >
-            Clear memory
-          </button>
+            <button
+              type="button"
+              onClick={() => {
+                handleClear();
+              }}
+            >
+              Clear memory
+            </button>
+          </nav>
 
           <pre>
             state: {decoderState}
           </pre>
-        </nav>
 
-        <audio
-          hidden
-          ref={audioRef}
-          src={src}
-          controls
-        />
+          {loader && (
+            <Oscilloscope
+              loader={loader}
+              width={320}
+              height={200}
+            />
+          )}
+        </div>
 
-        <br />
-
-        {loader && (
-          <Oscilloscope
-            loader={loader}
-            width={640}
-            height={400}
-          />
-        )}
-
-        {blocks.map((block, index) => (
-          <DataBlock
-            key={index}
-            index={index}
-            data={block}
-          />
-        ))}
+        <div id="debug">
+          {blocks.map((block, index) => (
+            <DataBlock
+              key={index}
+              index={index}
+              data={block}
+            />
+          ))}
+        </div>
       </div>
+
+      <audio
+        hidden
+        ref={audioRef}
+        src={src}
+        controls
+      />
 
       {loader && (
         <LoadingBars
