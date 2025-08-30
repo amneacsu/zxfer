@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { ZxLoader } from '../ZxLoader.tsx';
+import { ZxLoader } from '../ZxLoader.ts';
 
 import { LoadingBarRenderer } from './LoadingBarRenderer.ts';
 

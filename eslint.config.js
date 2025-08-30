@@ -21,6 +21,7 @@ export default [
     },
     rules: {
       'import/extensions': ['error', 'ignorePackages'],
+      'import/no-unresolved': 'error',
       'no-shadow': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-hooks/rules-of-hooks': 'error',

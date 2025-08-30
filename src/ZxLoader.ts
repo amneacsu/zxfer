@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { AudioWorkletUrl } from 'audio-worklet';
 
 import { DecoderListener, DecoderMessage, DecoderState } from './types.ts';
