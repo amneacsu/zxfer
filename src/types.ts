@@ -1,8 +1,4 @@
-export enum DecoderState {
-  WAITPILOT = 'WAITPILOT',
-  PILOT = 'PILOT',
-  PROG = 'PROG',
-}
+export type DecoderState = 'WAITPILOT' | 'PILOT' | 'PROG';
 
 export type DecoderMessage = (
   | {

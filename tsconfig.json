@@ -3,6 +3,7 @@
     "skipLibCheck": true,
     "noEmit": true,
     "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
     "jsx": "react",
     "strict": true,
     "outDir": "./serve/built",

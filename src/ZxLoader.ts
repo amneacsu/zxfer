@@ -10,7 +10,7 @@ interface ZxLoaderOptions {
 export class ZxLoader {
   audio: HTMLAudioElement;
   audioCtx: AudioContext;
-  state = DecoderState.WAITPILOT;
+  state: DecoderState = 'WAITPILOT';
   listeners: DecoderListener[] = [];
   decoder?: AudioWorkletNode;
 
@@ -20,7 +20,7 @@ export class ZxLoader {
   }
 
   reset() {
-    this.setState(DecoderState.WAITPILOT);
+    this.setState('WAITPILOT');
     this.decoder?.port.postMessage('reset');
   }
 

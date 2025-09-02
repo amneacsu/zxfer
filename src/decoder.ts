@@ -3,7 +3,7 @@ import { polarity } from './utils/polarity.ts';
 
 class Decoder extends AudioWorkletProcessor {
   polarity = -1;
-  state = DecoderState.WAITPILOT;
+  state = 'WAITPILOT';
   syncPulse1 = false;
   syncPulse2 = false;
   bitBuffer: (1 | 0)[] = [];
@@ -30,7 +30,7 @@ class Decoder extends AudioWorkletProcessor {
     this.highStates = 0;
     this.syncPulse1 = false;
     this.syncPulse2 = false;
-    this.state = DecoderState.WAITPILOT;
+    this.state = 'WAITPILOT';
     this.polarity = -1;
   }
 
@@ -69,9 +69,9 @@ class Decoder extends AudioWorkletProcessor {
       const fullBit = this.lowStates > 0 && this.highStates > 0 && samplePolarity !== this.polarity;
 
       switch (this.state) {
-        case DecoderState.WAITPILOT:
+        case 'WAITPILOT':
           if (this.lowStates > 25 && this.highStates > 25) {
-            this.setState(DecoderState.PILOT);
+            this.setState('PILOT');
             this.syncPulse1 = false;
             this.syncPulse2 = false;
             this.port.postMessage({
@@ -81,7 +81,7 @@ class Decoder extends AudioWorkletProcessor {
             this.byteBuffer = [];
           }
           break;
-        case DecoderState.PILOT:
+        case 'PILOT':
           if (fullBit && states < 40) {
             if (!this.syncPulse1) {
               console.log('heard 1st pulse');
@@ -93,15 +93,15 @@ class Decoder extends AudioWorkletProcessor {
               this.syncPulse2 = true;
               // for some reason the 2 sync pulses count as the first bit:
               this.bitBuffer.push(0);
-              this.setState(DecoderState.PROG);
+              this.setState('PROG');
               break;
             }
             console.warn('Received 3rd sync pulse in PILOT phase');
           }
           break;
-        case DecoderState.PROG:
+        case 'PROG':
           if (this.states > 100 || states > 100) {
-            this.setState(DecoderState.WAITPILOT);
+            this.setState('WAITPILOT');
             break;
           }
           if (!fullBit) break;
