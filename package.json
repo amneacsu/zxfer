@@ -15,21 +15,21 @@
     "lint": "eslint src"
   },
   "devDependencies": {
-    "@rspack/cli": "^1.4.11",
-    "@rspack/core": "^1.4.11",
-    "@stylistic/eslint-plugin": "^5.2.3",
-    "@types/audioworklet": "^0.0.82",
-    "@types/react": "^19.1.11",
-    "@types/react-dom": "^19.1.8",
-    "@typescript-eslint/eslint-plugin": "^8.40.0",
-    "@typescript-eslint/parser": "^8.35.1",
-    "eslint": "^9.33.0",
-    "eslint-plugin-import": "^2.32.0",
-    "eslint-plugin-react-hooks": "^5.2.0",
-    "typescript": "^5.9.2"
+    "@rspack/cli": "1.5.8",
+    "@rspack/core": "1.5.8",
+    "@stylistic/eslint-plugin": "5.2.3",
+    "@types/audioworklet": "0.0.82",
+    "@types/react": "19.1.11",
+    "@types/react-dom": "19.1.8",
+    "@typescript-eslint/eslint-plugin": "8.40.0",
+    "@typescript-eslint/parser": "8.40.0",
+    "eslint": "9.33.0",
+    "eslint-plugin-import": "2.32.0",
+    "eslint-plugin-react-hooks": "5.2.0",
+    "typescript": "5.9.2"
   },
   "dependencies": {
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
   }
 }
