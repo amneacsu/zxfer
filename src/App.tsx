@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ZxLoader } from './ZxLoader.ts';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
-import { DataBlock } from './components/DataBlock.tsx';
 import { LoadingBars } from './components/LoadingBars.tsx';
+import { bytesToHex } from './utils/byesToHex.ts';
 
 const audioFiles = [
   './audio/Manic_Miner.wav',
@@ -12,6 +12,7 @@ const audioFiles = [
 ];
 
 export const App = () => {
+  const dataViewRef = useRef<HTMLPreElement>(null);
   const [loadingBarsVisible, setLoadingBarsVisible] = useState(false);
   const [src, setSrc] = useState(audioFiles[0]);
   const [loader, setLoader] = useState<ZxLoader>();
@@ -75,6 +76,13 @@ export const App = () => {
     run();
   }, [run]);
 
+  useEffect(() => {
+    const dataViewElement = dataViewRef.current;
+    if (!dataViewElement) return;
+
+    dataViewElement.scrollTop = dataViewElement.scrollHeight;
+  }, [blocks]);
+
   return (
     <>
       <div id="ui">
@@ -133,15 +141,23 @@ export const App = () => {
           )}
         </div>
 
-        <div id="debug">
-          {blocks.map((block, index) => (
-            <DataBlock
-              key={index}
-              index={index}
-              data={block}
-            />
-          ))}
-        </div>
+        <pre id="debug" ref={dataViewRef}>
+          {blocks.map((block, index) => {
+            if (block.length === 0) return null;
+
+            return (
+              <React.Fragment key={index}>
+                {[
+                  `Block ${index}`,
+                  `Size: ${block.slice(1, -1).length} bytes`,
+                  '',
+                  bytesToHex(block, true, true),
+                  '',
+                ].join('\n')}
+              </React.Fragment>
+            );
+          })}
+        </pre>
       </div>
 
       <audio
