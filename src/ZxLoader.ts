@@ -81,9 +81,9 @@ export class ZxLoader {
 
   async init() {
     await this.audioCtx.audioWorklet.addModule(
-      new AudioWorkletUrl(new URL('./decoder.ts', import.meta.url)) as string,
+      new AudioWorkletUrl(new URL('./EdgeDecoder.ts', import.meta.url)) as string,
     );
-    this.decoder = new AudioWorkletNode(this.audioCtx, 'decoder');
+    this.decoder = new AudioWorkletNode(this.audioCtx, 'EdgeDecoder');
     this.decoder.port.onmessage = (event: MessageEvent<DecoderMessage>) => {
       this.emit(event.data);
     };

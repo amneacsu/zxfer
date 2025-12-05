@@ -1,5 +1,5 @@
 export const polarity = (value: number) => {
-  const threshold = 0.01;
+  const threshold = 0.1;
 
   if (value > threshold) return 1;
   else if (value < -threshold) return -1;
