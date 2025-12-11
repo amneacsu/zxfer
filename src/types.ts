@@ -1,5 +1,10 @@
 export type DecoderState = 'WAITPILOT' | 'PILOT' | 'PROG';
 
+export type BlockData = {
+  marker: number;
+  bytes: number[];
+};
+
 export type DecoderMessage = (
   | {
     type: 'statechange';
@@ -19,7 +24,7 @@ export type DecoderMessage = (
   }
   | {
     type: 'block';
-    payload: number[];
+    payload: BlockData;
   }
 );
 
@@ -42,6 +47,6 @@ export type DecoderListener = (
   }
   | {
     type: 'block';
-    handler: (payload: number[]) => void;
+    handler: (payload: BlockData) => void;
   }
 );

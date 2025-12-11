@@ -13,6 +13,8 @@ class EdgeDecoder extends AudioWorkletProcessor {
   bitPulses: number[] = [];
   dataLength = 0;
   speed = 1;
+  checksum: number | null = null;
+  marker: number | null = null;
 
   constructor() {
     super();
@@ -70,41 +72,52 @@ class EdgeDecoder extends AudioWorkletProcessor {
   }
 
   pushBlock() {
-    const checksum = this.byteBuffer.at(-1);
-    if (checksum === undefined) throw new Error('No checksum.');
-    const data = this.byteBuffer.slice(0, -1);
-    if (!this.check(data, checksum)) {
+    if (this.checksum === null) throw new Error('No checksum.');
+    if (this.marker === null) throw new Error('No marker.');
+    const data = [this.marker, ...this.byteBuffer];
+    if (!this.check(data, this.checksum)) {
       console.error('Checksum error.');
       // throw new Error('Checksum error.');
     }
 
-    this.port.postMessage({
-      type: 'block',
-      payload: data,
-    });
-
+    this.checksum = null;
+    this.marker = null;
     this.byteBuffer = [];
     this.setState('WAITPILOT');
   }
 
   pushByte() {
     const byte = parseInt(this.bitBuffer.join(''), 2);
-    this.byteBuffer.push(byte);
 
-    this.port.postMessage({
-      type: 'byte',
-      payload: byte,
-    });
+    if (this.marker === null) {
+      this.port.postMessage({
+        type: 'block',
+        payload: {
+          marker: byte,
+          bytes: [],
+        },
+      });
+      this.marker = byte;
+      return;
+    }
 
-    const [marker, ...data] = this.byteBuffer;
-    switch (marker) {
+    if ((this.marker === 0 && this.byteBuffer.length < 17) || (this.marker === 255 && this.byteBuffer.length < this.dataLength)) {
+      this.byteBuffer.push(byte);
+      this.port.postMessage({
+        type: 'byte',
+        payload: byte,
+      });
+      return;
+    }
+
+    this.checksum = byte;
+    const data = this.byteBuffer;
+    switch (this.marker) {
       case 0x00:
-        if (data.length < 18) break;
         this.dataLength = (data[12] << 8) | data[11];
         this.pushBlock();
         break;
       case 0xFF:
-        if (data.length < this.dataLength + 1) break;
         this.pushBlock();
         break;
       default:

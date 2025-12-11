@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import { AudioWorkletUrl } from 'audio-worklet';
 
-import { DecoderListener, DecoderMessage, DecoderState } from './types.ts';
+import { BlockData, DecoderListener, DecoderMessage, DecoderState } from './types.ts';
 
 interface ZxLoaderOptions {
   audio: HTMLAudioElement
@@ -75,7 +75,7 @@ export class ZxLoader {
     this.listen({ type: 'init', handler });
   }
 
-  onBlock(handler: (block: number[]) => void) {
+  onBlock(handler: (block: BlockData) => void) {
     this.listen({ type: 'block', handler });
   }
 

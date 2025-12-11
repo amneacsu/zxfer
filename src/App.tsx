@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ZxLoader } from './ZxLoader.ts';
+import { Block } from './components/Block.tsx';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { LoadingBars } from './components/LoadingBars.tsx';
-import { bytesToHex } from './utils/byesToHex.ts';
+import { ScreenMemory } from './components/ScreenMemory.tsx';
+import { BlockData } from './types.ts';
 
 const audioFiles = [
-  './audio/Manic_Miner.wav',
   './audio/Jetpac.wav',
+  './audio/Manic_Miner.wav',
   './audio/Zynaps.wav',
   './audio/aliens8bitmono.wav',
   './audio/bad.wav',
@@ -18,7 +20,7 @@ export const App = () => {
   const [src, setSrc] = useState(audioFiles[0]);
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
-  const [blocks, setBlocks] = useState<number[][]>([]);
+  const [blocks, setBlocks] = useState<BlockData[]>([]);
 
   const handleClear = useCallback(() => {
     loader?.reset();
@@ -39,12 +41,21 @@ export const App = () => {
 
     _loader.onByte((byte) => {
       setBlocks((prev) => {
-        return [...prev.slice(0, -1), [...(prev.at(-1) ?? []), byte]];
+        const b = prev.at(-1);
+        if (!b) return prev;
+
+        return [
+          ...prev.slice(0, -1),
+          {
+            ...b,
+            bytes: [...b.bytes, byte],
+          },
+        ];
       });
     });
 
-    _loader.onBlock(() => {
-      setBlocks((prev) => [...prev, []]);
+    _loader.onBlock((payload) => {
+      setBlocks((prev) => [...prev, payload]);
     });
 
     _loader.onInit(() => {
@@ -82,6 +93,21 @@ export const App = () => {
     if (!dataViewElement) return;
 
     dataViewElement.scrollTop = dataViewElement.scrollHeight;
+  }, [blocks]);
+
+  const screenBlock = useMemo(() => {
+    const screenHeaderBlock = blocks.filter((b) => {
+      return b.marker === 0 && b.bytes.length > 12;
+    }).find((b) => {
+      const arr = new Uint8Array(b.bytes);
+      const view = new DataView(arr.buffer);
+      const len = view.getUint16(11, true);
+      return len === 6912;
+    });
+
+    if (!screenHeaderBlock) return;
+
+    return blocks.at(blocks.indexOf(screenHeaderBlock) + 1);
   }, [blocks]);
 
   return (
@@ -140,22 +166,16 @@ export const App = () => {
               height={200}
             />
           )}
+
+          {screenBlock && (
+            <ScreenMemory block={screenBlock} />
+          )}
         </div>
 
         <pre id="debug" ref={dataViewRef}>
           {blocks.map((block, index) => {
-            if (block.length === 0) return null;
-
             return (
-              <React.Fragment key={index}>
-                {[
-                  `Block ${index}`,
-                  `Size: ${block.slice(1, -1).length} bytes`,
-                  '',
-                  bytesToHex(block, true, true),
-                  '',
-                ].join('\n')}
-              </React.Fragment>
+              <Block key={index} index={index} block={block} />
             );
           })}
         </pre>
