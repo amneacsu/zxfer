@@ -10,6 +10,7 @@ const audioFiles = [
   './audio/Jetpac.wav',
   './audio/Manic_Miner.wav',
   './audio/Zynaps.wav',
+  './audio/PinkPanther.wav',
   './audio/aliens8bitmono.wav',
   './audio/bad.wav',
 ];
