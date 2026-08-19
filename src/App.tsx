@@ -5,6 +5,7 @@ import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { LoadingBars } from './components/LoadingBars.tsx';
 import { ScreenMemory } from './components/ScreenMemory.tsx';
 import { BlockData } from './types.ts';
+import { useAudio } from './useAudio.ts';
 
 const audioFiles = [
   './audio/Jetpac.wav',
@@ -16,6 +17,7 @@ const audioFiles = [
 ];
 
 export const App = () => {
+  const {audioRef, handlePlay, handleRewind, handleVolumeChange, volume} = useAudio();
   const dataViewRef = useRef<HTMLPreElement>(null);
   const [loadingBarsVisible, setLoadingBarsVisible] = useState(false);
   const [src, setSrc] = useState(audioFiles[0]);
@@ -28,7 +30,6 @@ export const App = () => {
     setBlocks([]);
   }, [loader]);
 
-  const audioRef = useRef<HTMLAudioElement>(null);
   const run = useCallback(async () => {
     const audioElement = audioRef.current;
     if (!audioElement) return;
@@ -66,24 +67,7 @@ export const App = () => {
 
     await _loader.init();
     setLoader(_loader);
-  }, []);
-
-  const handlePlay = useCallback(() => {
-    const audioElement = audioRef.current;
-    if (!audioElement) return;
-
-    if (audioElement.paused) {
-      audioElement.play();
-    } else {
-      audioElement.pause();
-    }
-  }, []);
-
-  const handleRewind = useCallback(() => {
-    const audioElement = audioRef.current;
-    if (!audioElement) return;
-    audioElement.currentTime = 0;
-  }, []);
+  }, [audioRef]);
 
   useEffect(() => {
     run();
@@ -142,6 +126,11 @@ export const App = () => {
               Clear memory
             </button>
           </nav>
+
+          <fieldset>
+            <legend>Volume</legend>
+            <input type="range" onChange={handleVolumeChange} value={volume} min={0} max={1} step={0.01} />
+          </fieldset>
 
           <fieldset>
             <label>

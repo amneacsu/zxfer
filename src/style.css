@@ -82,3 +82,8 @@ select:focus, button:focus {
   content: "- waiting for tape... -";
   color: #888;
 }
+
+input[type="range"] {
+  display: block;
+  width: 100%;
+}
