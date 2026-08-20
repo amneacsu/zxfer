@@ -33,7 +33,7 @@ export default {
     },
     rules: [
       {
-        test: /\.(flac|mp3|mp4|m4a|opus|wav|png|gif)$/,
+        test: /\.(flac|mp3|mp4|m4a|opus|wav|png|jpg|gif|eot|svg|ttf|woff|woff2)$/,
         type: 'asset/resource',
       },
       {
@@ -50,10 +50,6 @@ export default {
           },
         },
         type: 'javascript/auto',
-      },
-      {
-        test: /\.(wav|eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
-        type: 'asset/resource',
       },
     ],
   },
