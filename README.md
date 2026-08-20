@@ -44,7 +44,7 @@ The decoding logic is based on documentation from the ZX Spectrum community:
 
 The current version is functional, but there is still work to be done:
 
-- Decoding video RAM to render ZX Spectrum loading screens and graphics
+- ✅ Decoding video RAM to render ZX Spectrum loading screens and graphics
 - Equalizer and filtering tools to clean up noisy or analog tape recordings
 - Fine-grained controls for adjusting sampling rate and pulse width thresholds
 - Support for detecting turbo loaders and custom tape formats
