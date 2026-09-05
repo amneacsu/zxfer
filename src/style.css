@@ -52,6 +52,7 @@ select:focus, button:focus {
   inset: 32px 120px;
   background-color: #fff;
   overflow-y: auto;
+  container-type: inline-size;
 }
 
 #sidebar {
@@ -71,8 +72,21 @@ select:focus, button:focus {
   padding: 10px 20px;
   margin: 0;
   color: #fff;
-  font-size: 20px;
+  font-size: 8px;
   white-space: pre;
+}
+
+@container (width > 880px) {
+  #debug {font-size: 12px;}
+}
+@container (width > 1080px) {
+  #debug {font-size: 16px;}
+}
+@container (width > 1240px) {
+  #debug {font-size: 20px;}
+}
+@container (width > 1650px) {
+  #debug {font-size: 24px;}
 }
 
 #debug h3:first-of-type {
