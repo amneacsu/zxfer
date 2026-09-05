@@ -54,10 +54,17 @@ export const App = () => {
   const [decoderState, setDecoderState] = useState('');
   const [blocks, setBlocks] = useState<BlockData[]>([]);
 
+  /** Clear memory. */
   const handleClear = useCallback(() => {
     loader?.reset();
     setBlocks([]);
   }, [loader]);
+
+  /** Rewind and reset */
+  const handleReset = useCallback(() => {
+    handleClear();
+    handleRewind();
+  }, [handleClear, handleRewind]);
 
   const run = useCallback(async () => {
     const audioElement = audioRef.current;
@@ -151,17 +158,8 @@ export const App = () => {
               Play / Pause
             </button>
 
-            <button onClick={handleRewind} type="button">
-              Rewind
-            </button>
-
-            <button
-              type="button"
-              onClick={() => {
-                handleClear();
-              }}
-            >
-              Clear memory
+            <button onClick={handleReset} type="button">
+              Reset
             </button>
           </nav>
 

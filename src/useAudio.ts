@@ -19,6 +19,7 @@ export const useAudio = () => {
     const audioElement = audioRef.current;
     if (!audioElement) return;
     audioElement.currentTime = 0;
+    audioElement.pause();
   }, []);
 
   const handleVolumeChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
