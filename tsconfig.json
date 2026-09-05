@@ -9,7 +9,8 @@
     "outDir": "./serve/built",
     "allowSyntheticDefaultImports": true,
     "noImplicitAny": true,
-    "module": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "es2023",
     "allowJs": true,
     "paths": {

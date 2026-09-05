@@ -1,10 +1,11 @@
+import { defineConfig } from 'eslint/config';
 import importPlugin from 'eslint-plugin-import';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import stylisticPlugin from '@stylistic/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 
-export default [
+export default defineConfig([
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
@@ -17,6 +18,7 @@ export default [
       import: importPlugin,
       'react-hooks': reactHooksPlugin,
       '@stylistic': stylisticPlugin,
+      // @ts-expect-error
       '@typescript-eslint': tsPlugin,
     },
     rules: {
@@ -33,4 +35,4 @@ export default [
       '@typescript-eslint/no-unnecessary-condition': ['error'],
     },
   },
-];
+]);

@@ -1,3 +1,4 @@
+import { defineConfig } from '@rspack/cli';
 import { rspack } from '@rspack/core';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -5,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-export default {
+export default defineConfig({
   entry: path.join(__dirname, 'src', 'index.tsx'),
   experiments: {
     css: true,
@@ -59,4 +60,4 @@ export default {
       'audio-worklet': path.resolve(__dirname, 'src/worklets/index.ts'),
     },
   },
-};
+});
