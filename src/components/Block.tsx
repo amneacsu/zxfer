@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { bytesToHex } from '../utils/byesToHex.ts';
-import { BlockData } from '../types.ts';
+import { BlockData, isDataBlock } from '../types.ts';
 
 interface BlockProps {
   block: BlockData;
@@ -17,11 +17,11 @@ export const Block = ({
     const view = new DataView(arr.buffer);
 
     const rows: string[] = [
-      `Block ${index} (${block.marker === 0 ? 'header' : 'data'})`,
+      `Block ${index} (${isDataBlock(block) ? 'header' : 'data'})`,
       `Size: ${block.bytes.length} bytes`,
     ];
 
-    if (block.marker === 0) {
+    if (isDataBlock(block)) {
       rows.push(
         `Data length: ${view.byteLength >= 13 ? view.getUint16(11, true) : ''}`,
         `Param 1: ${view.byteLength >= 15 ? view.getUint16(13, true) : ''}`,

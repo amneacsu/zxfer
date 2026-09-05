@@ -4,7 +4,7 @@ import { Block } from './components/Block.tsx';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { LoadingBars } from './components/LoadingBars.tsx';
 import { ScreenMemory } from './components/ScreenMemory.tsx';
-import { BlockData } from './types.ts';
+import { BlockData, isHeaderBlock } from './types.ts';
 import { useAudio } from './useAudio.ts';
 
 const audioFiles = [
@@ -82,7 +82,7 @@ export const App = () => {
 
   const screenBlock = useMemo(() => {
     const screenHeaderBlock = blocks.filter((b) => {
-      return b.marker === 0 && b.bytes.length > 12;
+      return isHeaderBlock(b) && b.bytes.length > 12;
     }).find((b) => {
       const arr = new Uint8Array(b.bytes);
       const view = new DataView(arr.buffer);

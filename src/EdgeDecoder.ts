@@ -1,4 +1,4 @@
-import { DecoderState } from './types.ts';
+import { DecoderState, MarkerByte } from './types.ts';
 import { polarity } from './utils/polarity.ts';
 import { nearest, samplesToStates, PULSE } from './utils/pulse.ts';
 
@@ -14,7 +14,7 @@ class EdgeDecoder extends AudioWorkletProcessor {
   dataLength = 0;
   speed = 1;
   checksum: number | null = null;
-  marker: number | null = null;
+  marker: MarkerByte | null = null;
 
   constructor() {
     super();
@@ -90,6 +90,10 @@ class EdgeDecoder extends AudioWorkletProcessor {
     const byte = parseInt(this.bitBuffer.join(''), 2);
 
     if (this.marker === null) {
+      if (byte !== 0x00 && byte !== 0xFF) {
+        throw new Error(`Invalid marker byte ${byte}.`);
+      }
+
       this.port.postMessage({
         type: 'block',
         payload: {
@@ -101,7 +105,7 @@ class EdgeDecoder extends AudioWorkletProcessor {
       return;
     }
 
-    if ((this.marker === 0 && this.byteBuffer.length < 17) || (this.marker === 255 && this.byteBuffer.length < this.dataLength)) {
+    if ((this.marker === 0x00 && this.byteBuffer.length < 17) || (this.marker === 0xFF && this.byteBuffer.length < this.dataLength)) {
       this.byteBuffer.push(byte);
       this.port.postMessage({
         type: 'byte',
