@@ -49,3 +49,7 @@ The current version is functional, but there is still work to be done:
 - Fine-grained controls for adjusting sampling rate and pulse width thresholds
 - Support for detecting turbo loaders and custom tape formats
 - Auto-detection of block type and content previews
+
+## Possible sample data - really bad audio
+
+- https://archive.org/details/zxs4880/ZXSPECTRUM_FORTH48-80.wav

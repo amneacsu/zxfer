@@ -38,6 +38,10 @@ const fileOptions = [
         label: 'Aliens',
       },
       {
+        value: './audio/ZXSPECTRUM_FORTH48-80.wav',
+        label: 'Forth 48-80',
+      },
+      {
         value: './audio/bad.wav',
         label: 'Bad recording',
       },
