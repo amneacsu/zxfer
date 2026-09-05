@@ -19,7 +19,8 @@ const audioFiles = [
 export const App = () => {
   const {audioRef, handlePlay, handleRewind, handleVolumeChange, volume} = useAudio();
   const dataViewRef = useRef<HTMLPreElement>(null);
-  const [loadingBarsVisible, setLoadingBarsVisible] = useState(false);
+  const [loadingBarsVisible, setLoadingBarsVisible] = useState(true);
+  const [audioSinkActive, setAudioSinkActive] = useState(true);
   const [src, setSrc] = useState(audioFiles[0]);
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
@@ -66,12 +67,17 @@ export const App = () => {
     });
 
     await _loader.init();
+    _loader.sink(true);
     setLoader(_loader);
   }, [audioRef]);
 
   useEffect(() => {
     run();
   }, [run]);
+
+  useEffect(() => {
+    loader?.sink(audioSinkActive);
+  }, [audioSinkActive, loader]);
 
   useEffect(() => {
     const dataViewElement = dataViewRef.current;
@@ -133,16 +139,30 @@ export const App = () => {
           </fieldset>
 
           <fieldset>
-            <label>
-              <input
-                type="checkbox"
-                checked={loadingBarsVisible}
-                onChange={(event) => {
-                  setLoadingBarsVisible(event.target.checked);
-                }}
-              />
-              Loading bars
-            </label>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={audioSinkActive}
+                  onChange={(event) => {
+                    setAudioSinkActive(event.target.checked);
+                  }}
+                />
+                Audio output
+              </label>
+            </div>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={loadingBarsVisible}
+                  onChange={(event) => {
+                    setLoadingBarsVisible(event.target.checked);
+                  }}
+                />
+                Loading bars
+              </label>
+            </div>
           </fieldset>
 
           <pre>

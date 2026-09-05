@@ -13,10 +13,12 @@ export class ZxLoader {
   state: DecoderState = 'WAITPILOT';
   listeners: DecoderListener[] = [];
   decoder?: AudioWorkletNode;
+  source: MediaElementAudioSourceNode;
 
   constructor(opts: ZxLoaderOptions) {
     this.audio = opts.audio;
     this.audioCtx = new AudioContext();
+    this.source = this.audioCtx.createMediaElementSource(this.audio);
   }
 
   reset() {
@@ -79,6 +81,14 @@ export class ZxLoader {
     this.listen({ type: 'block', handler });
   }
 
+  sink(active: boolean) {
+    if (active) {
+      this.source.connect(this.audioCtx.destination);
+    } else {
+      this.source.disconnect(this.audioCtx.destination);
+    }
+  }
+
   async init() {
     await this.audioCtx.audioWorklet.addModule(
       new AudioWorkletUrl(new URL('./EdgeDecoder.ts', import.meta.url)) as string,
@@ -87,9 +97,8 @@ export class ZxLoader {
     this.decoder.port.onmessage = (event: MessageEvent<DecoderMessage>) => {
       this.emit(event.data);
     };
-    const source = this.audioCtx.createMediaElementSource(this.audio);
-    source.connect(this.decoder);
-    source.connect(this.audioCtx.destination);
+
+    this.source.connect(this.decoder);
 
     // this.audio.addEventListener('ended', () => {
     //   decoder.port.close();
