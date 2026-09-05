@@ -7,13 +7,41 @@ import { ScreenMemory } from './components/ScreenMemory.tsx';
 import { BlockData, isHeaderBlock } from './types.ts';
 import { useAudio } from './useAudio.ts';
 
-const audioFiles = [
-  './audio/Jetpac.wav',
-  './audio/Manic_Miner.wav',
-  './audio/Zynaps.wav',
-  './audio/PinkPanther.wav',
-  './audio/aliens8bitmono.wav',
-  './audio/bad.wav',
+const fileOptions = [
+  {
+    label: 'Digital reproduction',
+    options: [
+      {
+        value: './audio/Jetpac.wav',
+        label: 'Jetpac',
+      },
+      {
+        value: './audio/Manic_Miner.wav',
+        label: 'Manic Miner',
+      },
+      {
+        value: './audio/Zynaps.wav',
+        label: 'Zynaps',
+      },
+      {
+        value: './audio/PinkPanther.wav',
+        label: 'Pink Panther',
+      },
+    ],
+  },
+  {
+    label: 'Analog audio',
+    options: [
+      {
+        value: './audio/aliens8bitmono.wav',
+        label: 'Aliens',
+      },
+      {
+        value: './audio/bad.wav',
+        label: 'Bad recording',
+      },
+    ],
+  },
 ];
 
 export const App = () => {
@@ -21,7 +49,7 @@ export const App = () => {
   const dataViewRef = useRef<HTMLPreElement>(null);
   const [loadingBarsVisible, setLoadingBarsVisible] = useState(true);
   const [audioSinkActive, setAudioSinkActive] = useState(true);
-  const [src, setSrc] = useState(audioFiles[0]);
+  const [src, setSrc] = useState(fileOptions.flatMap((f) => f.options).at(0)?.value);
   const [loader, setLoader] = useState<ZxLoader>();
   const [decoderState, setDecoderState] = useState('');
   const [blocks, setBlocks] = useState<BlockData[]>([]);
@@ -109,8 +137,12 @@ export const App = () => {
             setSrc(event.target.value);
             handleClear();
           }}>
-            {audioFiles.map((audioFile, index) => (
-              <option key={index} value={audioFile}>{audioFile}</option>
+            {fileOptions.map((group, index) => (
+              <optgroup key={index} label={group.label}>
+                {group.options.map((option) => (
+                  <option key={option.value} value={option.value}>{option.label}</option>
+                ))}
+              </optgroup>
             ))}
           </select>
 
