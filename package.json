@@ -5,6 +5,9 @@
   "type": "module",
   "author": "Andrei Neacșu <andrei.neacsu@ownzones.com>",
   "license": "MIT",
+  "engines": {
+    "node": "^24"
+  },
   "scripts": {
     "build": "rspack --mode=production --node-env=production",
     "check-types": "tsc --noEmit",
