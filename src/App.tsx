@@ -4,6 +4,7 @@ import { Block } from './components/Block.tsx';
 import { Oscilloscope } from './components/Oscilloscope.tsx';
 import { LoadingBars } from './components/LoadingBars.tsx';
 import { ScreenMemory } from './components/ScreenMemory.tsx';
+import { Button, Checkbox, Range, Select } from './ui/index.ts';
 import { BlockData, isHeaderBlock } from './types.ts';
 import { useAudio } from './useAudio.ts';
 
@@ -140,7 +141,7 @@ export const App = () => {
     <>
       <div id="ui">
         <div id="sidebar">
-          <select value={src} onChange={(event) => {
+          <Select value={src} onChange={(event) => {
             setSrc(event.target.value);
             handleClear();
           }}>
@@ -151,48 +152,40 @@ export const App = () => {
                 ))}
               </optgroup>
             ))}
-          </select>
+          </Select>
 
           <nav>
-            <button onClick={handlePlay} type="button">
+            <Button onClick={handlePlay}>
               Play / Pause
-            </button>
+            </Button>
 
-            <button onClick={handleReset} type="button">
+            <Button onClick={handleReset}>
               Reset
-            </button>
+            </Button>
           </nav>
 
           <fieldset>
             <legend>Volume</legend>
-            <input type="range" onChange={handleVolumeChange} value={volume} min={0} max={1} step={0.01} />
+            <Range
+              max={1}
+              min={0}
+              onChange={handleVolumeChange}
+              step={0.01}
+              value={volume}
+            />
           </fieldset>
 
           <fieldset>
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={audioSinkActive}
-                  onChange={(event) => {
-                    setAudioSinkActive(event.target.checked);
-                  }}
-                />
-                Audio output
-              </label>
-            </div>
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={loadingBarsVisible}
-                  onChange={(event) => {
-                    setLoadingBarsVisible(event.target.checked);
-                  }}
-                />
-                Loading bars
-              </label>
-            </div>
+            <Checkbox
+              checked={audioSinkActive}
+              label="Audio output"
+              onChange={(event) => setAudioSinkActive(event.target.checked)}
+            />
+            <Checkbox
+              checked={loadingBarsVisible}
+              label="Loading bars"
+              onChange={(event) => setLoadingBarsVisible(event.target.checked)}
+            />
           </fieldset>
 
           <pre>
